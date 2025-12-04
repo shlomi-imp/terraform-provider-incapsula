@@ -80,9 +80,13 @@ func resourceApiClientCreate(ctx context.Context, d *schema.ResourceData, m inte
 	apiClient := APIClientUpdateRequest{
 		Name:           d.Get("name").(string),
 		Description:    d.Get("description").(string),
-		ExpirationDate: d.Get("expiration_date").(string),
 		Enabled:        Bool(d.Get("enabled").(bool)),
 	}
+
+	// Only add expiration_period if regenerate is true
+    if d.Get("regenerate").(bool) {
+        updateRequest.ExpirationPeriod = d.Get("expiration_period").(string)
+    }
 
 	resp, err := client.CreateAPIClient(
 		d.Get("account_id").(int),
